@@ -6,6 +6,16 @@ Follow these steps **in sequence**. Do not skip steps or jump ahead. After each 
 
 ---
 
+## Step 0 — Session Start
+
+Before anything else:
+1. Read `tasks/lessons.md` — apply all past corrections to your behavior this session
+2. Read `tasks/todo.md` — understand what's already done and what's in progress
+3. Read `CLAUDE.md` — confirm current product state and tech stack
+4. Summarize current status to the user and confirm the goal before proceeding
+
+---
+
 ## Step 1 — CEO Review (`/plan-ceo-review`)
 
 Run the CEO/founder-mode plan review:
@@ -31,16 +41,21 @@ Present the plan and get user confirmation before proceeding.
 
 ---
 
-## Step 3 — Update PRD (`tasks/prd.md`)
+## Step 3 — Update Task Files
 
-Update `tasks/prd.md` to reflect the new phase/feature:
+Update all three task files before writing any code:
+
+**`tasks/prd.md`**
 - Add the feature to the appropriate phase section
 - Document acceptance criteria
 - Note any dependencies or open decisions
 
-Also update `tasks/todo.md` with the new sprint tasks (checkable items).
+**`tasks/todo.md`**
+- Add new sprint tasks as unchecked items `- [ ]`
+- Move any newly completed items to the Completed section
+- Remove stale or obsolete tasks
 
-Confirm with the user that the PRD looks correct before building.
+Confirm with the user that the task files look correct before building.
 
 ---
 
@@ -53,7 +68,9 @@ Spawn parallel subagents — one per module. Each subagent gets:
 
 Do NOT put multiple modules in one subagent. Maximize parallelism.
 
-After all subagents complete, verify each output meets its success criteria.
+After all subagents complete:
+- Verify each output meets its success criteria
+- Mark completed tasks in `tasks/todo.md` as done `- [x]`
 
 ---
 
@@ -77,6 +94,17 @@ Run the ship workflow:
 - Commit, push, create PR
 
 Report the PR URL to the user.
+
+---
+
+## Step 7 — Capture Lessons
+
+After shipping, update `tasks/lessons.md`:
+- Did anything go wrong or require re-work? Add a lesson with the rule and how to apply it.
+- Did an approach work especially well? Note it so it's repeated next time.
+- Keep entries concise: what happened → the rule → how to apply it.
+
+Only add entries that are non-obvious and applicable to future sessions. Skip anything already documented.
 
 ---
 
