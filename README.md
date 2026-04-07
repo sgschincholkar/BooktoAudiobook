@@ -56,6 +56,41 @@ Open http://localhost:3000
 4. Watch progress as each chapter is processed
 5. Download the ZIP when complete
 
+## Project Structure
+
+```
+BooktoAudiobook/
+├── frontend/                  # Next.js 14 (App Router) + Tailwind CSS
+│   ├── app/
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx           # Main upload + conversion UI
+│   ├── next.config.js
+│   ├── tailwind.config.js
+│   ├── tsconfig.json
+│   └── package.json
+│
+├── backend/                   # FastAPI (Python)
+│   ├── main.py                # API routes + job orchestration
+│   ├── parser.py              # DOCX/PDF → chapter text extraction
+│   ├── tts.py                 # ElevenLabs TTS integration
+│   ├── audio.py               # ffmpeg: WAV → MP3, loudness norm
+│   ├── storage.py             # Cloudflare R2 upload/download
+│   ├── requirements.txt
+│   └── tests/
+│       └── test_parser.py
+│
+├── tasks/
+│   ├── prd.md                 # Product requirements document
+│   ├── todo.md                # Sprint tasks
+│   └── lessons.md             # Corrections & learnings
+│
+├── .env.example               # All required environment variables
+├── .gitignore
+├── CLAUDE.md                  # Project context for AI assistant
+└── README.md
+```
+
 ## Phase 0 Limitations
 
 - No user authentication
