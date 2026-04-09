@@ -29,7 +29,7 @@ npm install
 **Backend:**
 ```bash
 cd backend
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ### 3. Run Locally
@@ -37,7 +37,7 @@ pip install -r requirements.txt
 **Backend (terminal 1):**
 ```bash
 cd backend
-uvicorn main:app --reload
+python -m uvicorn main:app --reload
 ```
 
 **Frontend (terminal 2):**

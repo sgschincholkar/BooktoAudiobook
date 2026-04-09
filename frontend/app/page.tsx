@@ -35,6 +35,29 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
 
+  const getHelpfulError = (message: string): string => {
+    const lower = message.toLowerCase()
+    if (
+      lower.includes('no extractable text') ||
+      lower.includes('scanned pdf') ||
+      lower.includes('ocr')
+    ) {
+      return 'This file appears to be a scanned/image PDF with no selectable text. Run OCR first, then upload again.'
+    }
+    return message
+  }
+
+  const isOcrRelatedError = (message: string | null): boolean => {
+    if (!message) return false
+    const lower = message.toLowerCase()
+    return (
+      lower.includes('no extractable text') ||
+      lower.includes('scanned pdf') ||
+      lower.includes('ocr') ||
+      lower.includes('scanned/image pdf')
+    )
+  }
+
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
@@ -101,7 +124,7 @@ export default function Home() {
 
       if (!uploadRes.ok) {
         const errorData = await uploadRes.json()
-        throw new Error(errorData.detail || 'Upload failed')
+        throw new Error(getHelpfulError(errorData.detail || 'Upload failed'))
       }
 
       const uploadData = await uploadRes.json()
@@ -119,10 +142,10 @@ export default function Home() {
 
       if (!generateRes.ok) {
         const errorData = await generateRes.json()
-        throw new Error(errorData.detail || 'Generation failed')
+        throw new Error(getHelpfulError(errorData.detail || 'Generation failed'))
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? getHelpfulError(err.message) : 'An error occurred')
       setIsGenerating(false)
     }
   }
@@ -143,7 +166,7 @@ export default function Home() {
           setIsGenerating(false)
           clearInterval(pollInterval)
           if (data.status === 'error') {
-            setError(data.error || 'Generation failed')
+            setError(getHelpfulError(data.error || 'Generation failed'))
           }
         }
       } catch (err) {
@@ -184,7 +207,17 @@ export default function Home() {
 
       {error && (
         <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 rounded-lg text-red-700 dark:text-red-300">
-          {error}
+          <p>{error}</p>
+          {isOcrRelatedError(error) && (
+            <a
+              href="https://ocrmypdf.readthedocs.io/en/latest/introduction.html"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block mt-2 underline text-red-800 dark:text-red-200 hover:opacity-90"
+            >
+              How to OCR this PDF (free)
+            </a>
+          )}
         </div>
       )}
 

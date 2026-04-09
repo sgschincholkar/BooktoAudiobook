@@ -27,12 +27,12 @@ def generate_audio(text: str, voice_id: str) -> bytes:
     try:
         client = get_client()
 
-        # Generate audio using eleven_multilingual_v2 model
+        # Use a broadly available format to avoid paid-tier-only restrictions.
         audio = client.text_to_speech.convert(
             text=text,
             voice_id=voice_id,
             model_id="eleven_multilingual_v2",
-            output_format="mp3_44100_192",
+            output_format="mp3_44100_128",
         )
 
         # Collect all audio chunks into bytes

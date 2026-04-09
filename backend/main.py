@@ -97,6 +97,18 @@ async def upload_file(file: UploadFile = File(...)):
             # Clean up temp file
             os.unlink(temp_path)
 
+        if not chapters:
+            raise HTTPException(
+                status_code=400,
+                detail="No chapters detected in document"
+            )
+
+        if all(ch.get("word_count", 0) == 0 for ch in chapters):
+            raise HTTPException(
+                status_code=400,
+                detail="No extractable text found. If this is a scanned PDF, run OCR first."
+            )
+
         # Create job
         job_id = str(uuid.uuid4())
         jobs[job_id] = {
@@ -239,15 +251,27 @@ def process_job(job_id: str, voice_id: str):
         for idx, chapter in enumerate(job["chapters"]):
             # Update chapter status
             job["chapter_statuses"][idx]["status"] = "processing"
+            job["chapter_statuses"][idx]["progress"] = 10
 
             try:
+                chapter_text = chapter.get("text", "").strip()
+                if not chapter_text:
+                    raise Exception(
+                        "Chapter has no text content to convert. Try a text-based PDF/DOCX (not scanned images)."
+                    )
+
                 # Generate audio from text
-                audio_bytes = generate_audio(chapter["text"], voice_id)
+                audio_bytes = generate_audio(chapter_text, voice_id)
+                if not audio_bytes:
+                    raise Exception("TTS provider returned empty audio output")
+                job["chapter_statuses"][idx]["progress"] = 70
 
                 # Process audio (convert to MP3 with normalization)
                 output_filename = f"{idx + 1:02d}_{sanitize_filename(chapter['title'])}.mp3"
                 output_path = os.path.join(output_dir, output_filename)
                 process_audio(audio_bytes, output_path)
+                if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+                    raise Exception("Generated audio file is empty")
 
                 output_files.append(output_path)
 
